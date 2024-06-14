@@ -1,0 +1,5 @@
+*.swp
+*.log
+.DS_Store
+./vaxwish
+ssh_data/

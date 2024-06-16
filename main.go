@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/wish"
 )
 
-func VaxisMiddleware(vx *vaxis.Vaxis) wish.Middleware {
+func VaxisMiddleware() wish.Middleware {
 	return func(next ssh.Handler) ssh.Handler {
 		return func(sesh ssh.Session) {
 			pty, windowChanges, ok := sesh.Pty()
@@ -14,6 +14,16 @@ func VaxisMiddleware(vx *vaxis.Vaxis) wish.Middleware {
 				next(sesh)
 				return
 			}
+
+			vx, err := vaxis.New(vaxis.Options{
+				WithTTYFile: pty.Master,
+			})
+			if err != nil {
+				wish.Errorln(sesh, err)
+				next(sesh)
+				return
+			}
+			defer vx.Close()
 
 			win := vx.Window()
 			win.Width = pty.Window.Width
@@ -35,6 +45,7 @@ func VaxisMiddleware(vx *vaxis.Vaxis) wish.Middleware {
 				case vaxis.Key:
 					switch ev.String() {
 					case "Ctrl+c":
+						next(sesh)
 						return
 					}
 				}
@@ -46,8 +57,6 @@ func VaxisMiddleware(vx *vaxis.Vaxis) wish.Middleware {
 				win.Print(vaxis.Segment{Text: "Hello, World!"})
 				vx.Render()
 			}
-
-			vx.Close()
 		}
 	}
 }

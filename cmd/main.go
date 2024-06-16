@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"git.sr.ht/~rockorager/vaxis"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/neurosnap/vaxwish"
@@ -36,14 +35,6 @@ func GitSshServer() {
 
 	logger := slog.Default()
 
-	vx, err := vaxis.New(vaxis.Options{
-		DisableMouse: true,
-	})
-	if err != nil {
-		panic(err)
-	}
-	defer vx.Close()
-
 	s, err := wish.NewServer(
 		wish.WithAddress(
 			fmt.Sprintf("%s:%s", host, port),
@@ -53,7 +44,7 @@ func GitSshServer() {
 		),
 		wish.WithPublicKeyAuth(authHandler),
 		wish.WithMiddleware(
-			vaxwish.VaxisMiddleware(vx),
+			vaxwish.VaxisMiddleware(),
 		),
 	)
 

@@ -2,6 +2,8 @@ module github.com/neurosnap/vaxwish
 
 go 1.22.4
 
+replace git.sr.ht/~rockorager/vaxis => ../../src/vaxis
+
 require (
 	git.sr.ht/~rockorager/vaxis v0.8.5
 	github.com/charmbracelet/ssh v0.0.0-20240604154955-a40c6a0d028f
